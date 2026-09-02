@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Culinary Finder - Cari Kuliner Lokal Terbaik</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #fff7ed;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .navbar {
+            background-color: #ffffff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #ea580c;
+        }
+
+        .search-wrapper {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        #searchInput, #filterCategory {
+            padding: 10px 14px;
+            border: 1px solid #fed7aa;
+            border-radius: 8px;
+            outline: none;
+            font-size: 14px;
+            background-color: #fff;
+            transition: all 0.2s;
+        }
+
+        #searchInput {
+            flex: 1;
+        }
+
+        #searchInput:focus, #filterCategory:focus {
+            border-color: #fb923c;
+            box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.15);
+        }
+
+        .hero-text {
+            text-align: center;
+            margin: 30px 0 25px 0;
+        }
+
+        .hero-text h2 {
+            font-size: 24px;
+            color: #9a3412;
+            margin-bottom: 5px;
+        }
+
+        .hero-text p {
+            font-size: 14px;
+            color: #7c2d12;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+            padding-bottom: 50px;
+        }
+
+        .product-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            border: 1px solid #ffedd5;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 12px rgba(234, 88, 12, 0.08);
+        }
+
+        .card-img {
+            height: 180px;
+            background-color: #ffedd5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #c2410c;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .badge {
+            display: inline-block;
+            font-size: 11px;
+            background-color: #ffedd5;
+            color: #ea580c;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .rating {
+            font-size: 12px;
+            font-weight: 600;
+            color: #b45309;
+        }
+
+        .product-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 6px;
+        }
+
+        .product-desc {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-top: 1px solid #ffedd5;
+            padding-top: 12px;
+        }
+
+        .price-label {
+            display: block;
+            font-size: 10px;
+            color: #9ca3af;
+            text-transform: uppercase;
+        }
+
+        .price {
+            font-size: 14px;
+            font-weight: bold;
+            color: #16a34a;
+        }
+
+        .btn-wishlist {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-wishlist:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-wishlist.saved {
+            background-color: #16a34a;
+        }
+
+        .btn-wishlist.saved:hover {
+            background-color: #15803d;
+        }
+
+        .empty-msg {
+            text-align: center;
+            padding: 40px;
+            color: #9ca3af;
+            font-size: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="container">
+            <h1 class="logo">KulinerNusantara 🍜</h1>
+            <div class="search-wrapper">
+                <input type="text" id="searchInput" placeholder="Cari nama makanan atau lokasi..." autocomplete="off">
+                <select id="filterCategory">
+                    <option value="all">Semua Kategori</option>
+                    <option value="kaki lima">Kaki Lima</option>
+                    <option value="kuliner malam">Kuliner Malam</option>
+                    <option value="legendaris">Legendaris</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero-text">
+            <h2>Temukan Hidden Gems Kuliner Lokal</h2>
+            <p>Rekomendasi warung dan jajanan kaki lima terenak pilihan warga.</p>
+        </section>
+
+        <div id="productGrid" class="grid">
+            
+            <div class="product-card" data-name="nasi goreng legendaris" data-category="kaki lima">
+                <div class="card-img">🤤 Foto Nasi Goreng</div>
+                <div class="card-body">
+                    <div class="card-meta">
+                        <span class="badge">Kaki Lima</span>
+                        <span class="rating">⭐ 4.8 (120 ulasan)</span>
+                    </div>
+                    <h3 class="product-title">Nasi Goreng Legendaris</h3>
+                    <p class="product-desc">Jl. Merdeka No. 45 - Buka setiap malam pukul 18.00 - 02.00 WIB.</p>
+                    <div class="card-footer">
+                        <div>
+                            <span class="price-label">Kisaran Harga</span>
+                            <span class="price">Rp 15.000 - Rp 25.000</span>
+                        </div>
+                        <button class="btn-wishlist" onclick="toggleWishlist(this, 'Nasi Goreng Legendaris')">Simpan</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card" data-name="sate madura terenak" data-category="kuliner malam">
+                <div class="card-img">🔥 Foto Sate Madura</div>
+                <div class="card-body">
+                    <div class="card-meta">
+                        <span class="badge">Kuliner Malam</span>
+                        <span class="rating">⭐ 4.9 (230 ulasan)</span>
+                    </div>
+                    <h3 class="product-title">Sate Madura Terenak</h3>
+                    <p class="product-desc">Jl. Asia Afrika - Daging ayam/kambing empuk dengan bumbu kacang kental.</p>
+                    <div class="card-footer">
+                        <div>
+                            <span class="price-label">Kisaran Harga</span>
+                            <span class="price">Rp 20.000 - Rp 35.000</span>
+                        </div>
+                        <button class="btn-wishlist" onclick="toggleWishlist(this, 'Sate Madura Terenak')">Simpan</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card" data-name="bakso malang seger" data-category="legendaris">
+                <div class="card-img">🍲 Foto Bakso Malang</div>
+                <div class="card-body">
+                    <div class="card-meta">
+                        <span class="badge">Legendaris</span>
+                        <span class="rating">⭐ 4.7 (95 ulasan)</span>
+                    </div>
+                    <h3 class="product-title">Bakso Malang Seger</h3>
+                    <p class="product-desc">Jl. Braga No. 12 - Kuah kaldu sapi asli dengan pilihan gorengan renyah.</p>
+                    <div class="card-footer">
+                        <div>
+                            <span class="price-label">Kisaran Harga</span>
+                            <span class="price">Rp 12.000 - Rp 24.000</span>
+                        </div>
+                        <button class="btn-wishlist" onclick="toggleWishlist(this, 'Bakso Malang Seger')">Simpan</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="emptyMessage" class="empty-msg" style="display: none;">
+            <p>Kuliner yang Anda cari tidak ditemukan. Coba kata kunci lain!</p>
+        </div>
+    </main>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const filterCategory = document.getElementById('filterCategory');
+        const productCards = document.querySelectorAll('.product-card');
+        const emptyMessage = document.getElementById('emptyMessage');
+
+        function filterProducts() {
+            const keyword = searchInput.value.toLowerCase().trim();
+            const selectedCategory = filterCategory.value;
+            let visibleCount = 0;
+
+            productCards.forEach(card => {
+                const name = card.getAttribute('data-name');
+                const category = card.getAttribute('data-category');
+
+                const matchesSearch = name.includes(keyword);
+                const matchesCategory = selectedCategory === 'all' || category === selectedCategory;
+
+                if (matchesSearch && matchesCategory) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            if (visibleCount === 0) {
+                emptyMessage.style.display = 'block';
+            } else {
+                emptyMessage.style.display = 'none';
+            }
+        }
+
+        searchInput.addEventListener('input', filterProducts);
+        filterCategory.addEventListener('change', filterProducts);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedItems = JSON.parse(localStorage.getItem('kulinerWishlist')) || [];
+            
+            productCards.forEach(card => {
+                const title = card.querySelector('.product-title').innerText;
+                const btn = card.querySelector('.btn-wishlist');
+                
+                if (savedItems.includes(title)) {
+                    btn.innerText = 'Tersimpan ✓';
+                    btn.classList.add('saved');
+                }
+            });
+        });
+
+        function toggleWishlist(button, culinaryName) {
+            let savedItems = JSON.parse(localStorage.getItem('kulinerWishlist')) || [];
+
+            if (!savedItems.includes(culinaryName)) {
+                savedItems.push(culinaryName);
+                button.innerText = 'Tersimpan ✓';
+                button.classList.add('saved');
+            } else {
+                savedItems = savedItems.filter(item => item !== culinaryName);
+                button.innerText = 'Simpan';
+                button.classList.remove('saved');
+            }
+
+            localStorage.setItem('kulinerWishlist', JSON.stringify(savedItems));
+        }
+    </script>
+</body>
+</html>
